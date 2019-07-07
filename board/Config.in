@@ -146,6 +146,15 @@ if AOS_BOARD_ESP8266
     source "platform/arch/xtensa/lx106/Config.in"
 endif
 
+source "board/gokit3_soc/Config.in"
+if AOS_BOARD_GOKIT3_SOC
+    config AOS_BUILD_BOARD
+        default "gokit3_soc"
+
+    source "platform/mcu/esp8266/Config.in"
+    source "platform/arch/xtensa/lx106/Config.in"
+endif
+
 source "board/evkbimxrt1050/Config.in"
 if AOS_BOARD_EVKBIMXRT1050
     config AOS_BUILD_BOARD
