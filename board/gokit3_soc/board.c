@@ -4,7 +4,6 @@
 
 #include "aos/hal/flash.h"
 #include <aos/kernel.h>
-#include "aos/kernel.h"
 
 #include "esp_system.h"
 
@@ -365,4 +364,16 @@ uint32_t user_rf_cal_sector_set(void)
     }
 
     return rf_cal_sec;
+}
+#include "ulog/ulog.h"
+void borad_init(void)
+{
+#ifdef GOKIT3_RGBLED
+#include "hal_rgb_led.h"
+    printf("rgbGpioInit success!\n\r");
+    rgbGpioInit();
+    LOG("rgbLedInit start");
+    rgbLedInit();
+    rgbControl(0, 255, 0);
+#endif
 }

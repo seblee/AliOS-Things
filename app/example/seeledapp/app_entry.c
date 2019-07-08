@@ -23,7 +23,7 @@
 
 #include <k_api.h>
 
-#if defined(ENABLE_AOS_OTA) 
+#if defined(ENABLE_AOS_OTA)
 #include "ota/ota_service.h"
 #endif
 
@@ -33,7 +33,7 @@ static char linkkit_started = 0;
 char awss_running = 0;
 extern int combo_net_init(void);
 #else
-static char awss_running    = 0;
+static char awss_running = 0;
 #endif
 
 void set_iotx_info();
@@ -43,18 +43,20 @@ void do_awss_active();
 void print_heap()
 {
     extern k_mm_head *g_kmm_head;
-    int               free = g_kmm_head->free_size;
+    int free = g_kmm_head->free_size;
     LOG("============free heap size =%d==========", free);
 }
 #endif
 
 static void wifi_service_event(input_event_t *event, void *priv_data)
 {
-    if (event->type != EV_WIFI) {
+    if (event->type != EV_WIFI)
+    {
         return;
     }
 
-    if (event->code != CODE_WIFI_ON_GOT_IP) {
+    if (event->code != CODE_WIFI_ON_GOT_IP)
+    {
         return;
     }
 
@@ -62,18 +64,21 @@ static void wifi_service_event(input_event_t *event, void *priv_data)
     memset(&config, 0, sizeof(netmgr_ap_config_t));
     netmgr_get_ap_config(&config);
     LOG("wifi_service_event config.ssid %s", config.ssid);
-    if (strcmp(config.ssid, "adha") == 0 || strcmp(config.ssid, "aha") == 0) {
+    if (strcmp(config.ssid, "adha") == 0 || strcmp(config.ssid, "aha") == 0)
+    {
         // clear_wifi_ssid();
         return;
     }
 
- #ifdef EN_COMBO_NET
-    if (awss_running) {
+#ifdef EN_COMBO_NET
+    if (awss_running)
+    {
         awss_success_notify();
     }
 #endif
 
-    if (!linkkit_started) {
+    if (!linkkit_started)
+    {
 #ifdef CONFIG_PRINT_HEAP
         print_heap();
 #endif
@@ -86,21 +91,23 @@ static void wifi_service_event(input_event_t *event, void *priv_data)
     }
 }
 
-
 static void cloud_service_event(input_event_t *event, void *priv_data)
 {
-    if (event->type != EV_YUNIO) {
+    if (event->type != EV_YUNIO)
+    {
         return;
     }
 
     LOG("cloud_service_event %d", event->code);
 
-    if (event->code == CODE_YUNIO_ON_CONNECTED) {
+    if (event->code == CODE_YUNIO_ON_CONNECTED)
+    {
         LOG("user sub and pub here");
         return;
     }
 
-    if (event->code == CODE_YUNIO_ON_DISCONNECTED) {
+    if (event->code == CODE_YUNIO_ON_DISCONNECTED)
+    {
     }
 }
 
@@ -114,98 +121,99 @@ static void cloud_service_event(input_event_t *event, void *priv_data)
 
 static void linkkit_event_monitor(int event)
 {
-    switch (event) {
-        case IOTX_AWSS_START: // AWSS start without enbale, just supports device discover
-            // operate led to indicate user
-            LOG("IOTX_AWSS_START");
-            break;
-        case IOTX_AWSS_ENABLE: // AWSS enable, AWSS doesn't parse awss packet until AWSS is enabled.
-            LOG("IOTX_AWSS_ENABLE");
-            // operate led to indicate user
-            break;
-        case IOTX_AWSS_LOCK_CHAN: // AWSS lock channel(Got AWSS sync packet)
-            LOG("IOTX_AWSS_LOCK_CHAN");
-            // operate led to indicate user
-            break;
-        case IOTX_AWSS_PASSWD_ERR: // AWSS decrypt passwd error
-            LOG("IOTX_AWSS_PASSWD_ERR");
-            // operate led to indicate user
-            break;
-        case IOTX_AWSS_GOT_SSID_PASSWD:
-            LOG("IOTX_AWSS_GOT_SSID_PASSWD");
-            // operate led to indicate user
-            break;
-        case IOTX_AWSS_CONNECT_ADHA: // AWSS try to connnect adha (device
-                                     // discover, router solution)
-            LOG("IOTX_AWSS_CONNECT_ADHA");
-            // operate led to indicate user
-            break;
-        case IOTX_AWSS_CONNECT_ADHA_FAIL: // AWSS fails to connect adha
-            LOG("IOTX_AWSS_CONNECT_ADHA_FAIL");
-            // operate led to indicate user
-            break;
-        case IOTX_AWSS_CONNECT_AHA: // AWSS try to connect aha (AP solution)
-            LOG("IOTX_AWSS_CONNECT_AHA");
-            // operate led to indicate user
-            break;
-        case IOTX_AWSS_CONNECT_AHA_FAIL: // AWSS fails to connect aha
-            LOG("IOTX_AWSS_CONNECT_AHA_FAIL");
-            // operate led to indicate user
-            break;
-        case IOTX_AWSS_SETUP_NOTIFY: // AWSS sends out device setup information
-                                     // (AP and router solution)
-            LOG("IOTX_AWSS_SETUP_NOTIFY");
-            // operate led to indicate user
-            break;
-        case IOTX_AWSS_CONNECT_ROUTER: // AWSS try to connect destination router
-            LOG("IOTX_AWSS_CONNECT_ROUTER");
-            // operate led to indicate user
-            break;
-        case IOTX_AWSS_CONNECT_ROUTER_FAIL: // AWSS fails to connect destination
-                                            // router.
-            LOG("IOTX_AWSS_CONNECT_ROUTER_FAIL");
-            // operate led to indicate user
-            break;
-        case IOTX_AWSS_GOT_IP: // AWSS connects destination successfully and got
-                               // ip address
-            LOG("IOTX_AWSS_GOT_IP");
-            // operate led to indicate user
-            break;
-        case IOTX_AWSS_SUC_NOTIFY: // AWSS sends out success notify (AWSS
-                                   // sucess)
-            LOG("IOTX_AWSS_SUC_NOTIFY");
-            // operate led to indicate user
-            break;
-        case IOTX_AWSS_BIND_NOTIFY: // AWSS sends out bind notify information to
-                                    // support bind between user and device
-            LOG("IOTX_AWSS_BIND_NOTIFY");
-            // operate led to indicate user
-            break;
-        case IOTX_AWSS_ENABLE_TIMEOUT: // AWSS enable timeout
-                                       // user needs to enable awss again to support get ssid & passwd of router
-            LOG("IOTX_AWSS_ENALBE_TIMEOUT");
-            // operate led to indicate user
-            break;
-        case IOTX_CONN_CLOUD: // Device try to connect cloud
-            LOG("IOTX_CONN_CLOUD");
-            // operate led to indicate user
-            break;
-        case IOTX_CONN_CLOUD_FAIL: // Device fails to connect cloud, refer to
-                                   // net_sockets.h for error code
-            LOG("IOTX_CONN_CLOUD_FAIL");
-            // operate led to indicate user
-            break;
-        case IOTX_CONN_CLOUD_SUC: // Device connects cloud successfully
-            LOG("IOTX_CONN_CLOUD_SUC");
-            // operate led to indicate user
-            break;
-        case IOTX_RESET: // Linkkit reset success (just got reset response from
-                         // cloud without any other operation)
-            LOG("IOTX_RESET");
-            // operate led to indicate user
-            break;
-        default:
-            break;
+    switch (event)
+    {
+    case IOTX_AWSS_START: // AWSS start without enbale, just supports device discover
+        // operate led to indicate user
+        LOG("IOTX_AWSS_START");
+        break;
+    case IOTX_AWSS_ENABLE: // AWSS enable, AWSS doesn't parse awss packet until AWSS is enabled.
+        LOG("IOTX_AWSS_ENABLE");
+        // operate led to indicate user
+        break;
+    case IOTX_AWSS_LOCK_CHAN: // AWSS lock channel(Got AWSS sync packet)
+        LOG("IOTX_AWSS_LOCK_CHAN");
+        // operate led to indicate user
+        break;
+    case IOTX_AWSS_PASSWD_ERR: // AWSS decrypt passwd error
+        LOG("IOTX_AWSS_PASSWD_ERR");
+        // operate led to indicate user
+        break;
+    case IOTX_AWSS_GOT_SSID_PASSWD:
+        LOG("IOTX_AWSS_GOT_SSID_PASSWD");
+        // operate led to indicate user
+        break;
+    case IOTX_AWSS_CONNECT_ADHA: // AWSS try to connnect adha (device
+                                 // discover, router solution)
+        LOG("IOTX_AWSS_CONNECT_ADHA");
+        // operate led to indicate user
+        break;
+    case IOTX_AWSS_CONNECT_ADHA_FAIL: // AWSS fails to connect adha
+        LOG("IOTX_AWSS_CONNECT_ADHA_FAIL");
+        // operate led to indicate user
+        break;
+    case IOTX_AWSS_CONNECT_AHA: // AWSS try to connect aha (AP solution)
+        LOG("IOTX_AWSS_CONNECT_AHA");
+        // operate led to indicate user
+        break;
+    case IOTX_AWSS_CONNECT_AHA_FAIL: // AWSS fails to connect aha
+        LOG("IOTX_AWSS_CONNECT_AHA_FAIL");
+        // operate led to indicate user
+        break;
+    case IOTX_AWSS_SETUP_NOTIFY: // AWSS sends out device setup information
+                                 // (AP and router solution)
+        LOG("IOTX_AWSS_SETUP_NOTIFY");
+        // operate led to indicate user
+        break;
+    case IOTX_AWSS_CONNECT_ROUTER: // AWSS try to connect destination router
+        LOG("IOTX_AWSS_CONNECT_ROUTER");
+        // operate led to indicate user
+        break;
+    case IOTX_AWSS_CONNECT_ROUTER_FAIL: // AWSS fails to connect destination
+                                        // router.
+        LOG("IOTX_AWSS_CONNECT_ROUTER_FAIL");
+        // operate led to indicate user
+        break;
+    case IOTX_AWSS_GOT_IP: // AWSS connects destination successfully and got
+                           // ip address
+        LOG("IOTX_AWSS_GOT_IP");
+        // operate led to indicate user
+        break;
+    case IOTX_AWSS_SUC_NOTIFY: // AWSS sends out success notify (AWSS
+                               // sucess)
+        LOG("IOTX_AWSS_SUC_NOTIFY");
+        // operate led to indicate user
+        break;
+    case IOTX_AWSS_BIND_NOTIFY: // AWSS sends out bind notify information to
+                                // support bind between user and device
+        LOG("IOTX_AWSS_BIND_NOTIFY");
+        // operate led to indicate user
+        break;
+    case IOTX_AWSS_ENABLE_TIMEOUT: // AWSS enable timeout
+                                   // user needs to enable awss again to support get ssid & passwd of router
+        LOG("IOTX_AWSS_ENALBE_TIMEOUT");
+        // operate led to indicate user
+        break;
+    case IOTX_CONN_CLOUD: // Device try to connect cloud
+        LOG("IOTX_CONN_CLOUD");
+        // operate led to indicate user
+        break;
+    case IOTX_CONN_CLOUD_FAIL: // Device fails to connect cloud, refer to
+                               // net_sockets.h for error code
+        LOG("IOTX_CONN_CLOUD_FAIL");
+        // operate led to indicate user
+        break;
+    case IOTX_CONN_CLOUD_SUC: // Device connects cloud successfully
+        LOG("IOTX_CONN_CLOUD_SUC");
+        // operate led to indicate user
+        break;
+    case IOTX_RESET: // Linkkit reset success (just got reset response from
+                     // cloud without any other operation)
+        LOG("IOTX_RESET");
+        // operate led to indicate user
+        break;
+    default:
+        break;
     }
 }
 
@@ -222,10 +230,10 @@ void do_awss_active()
 {
     LOG("do_awss_active %d\n", awss_running);
     awss_running = 1;
-    #ifdef WIFI_PROVISION_ENABLED
+#ifdef WIFI_PROVISION_ENABLED
     extern int awss_config_press();
     awss_config_press();
-    #endif
+#endif
 }
 
 #ifdef SUPPORT_DEV_AP
@@ -240,7 +248,8 @@ void awss_open_dev_ap(void *p)
 {
     iotx_event_regist_cb(linkkit_event_monitor);
     LOG("%s\n", __func__);
-    if (netmgr_start(false) < 0) {
+    if (netmgr_start(false) < 0)
+    {
         aos_msleep(2000);
         awss_dev_ap_start();
     }
@@ -275,8 +284,7 @@ static void linkkit_reset(void *p)
     HAL_Reboot();
 }
 
-
-extern int  awss_report_reset();
+extern int awss_report_reset();
 static void do_awss_reset()
 {
 #ifdef WIFI_PROVISION_ENABLED
@@ -285,19 +293,23 @@ static void do_awss_reset()
     aos_post_delayed_action(2000, linkkit_reset, NULL);
 }
 
-
 void linkkit_key_process(input_event_t *eventinfo, void *priv_data)
 {
-    if (eventinfo->type != EV_KEY) {
+    if (eventinfo->type != EV_KEY)
+    {
         return;
     }
     LOG("awss config press %u\n", eventinfo->value);
 
-    if (eventinfo->code == CODE_BOOT) {
-        if (eventinfo->value == VALUE_KEY_CLICK) {
+    if (eventinfo->code == CODE_BOOT)
+    {
+        if (eventinfo->value == VALUE_KEY_CLICK)
+        {
 
             do_awss_active();
-        } else if (eventinfo->value == VALUE_KEY_LTCLICK) {
+        }
+        else if (eventinfo->value == VALUE_KEY_LTCLICK)
+        {
             do_awss_reset();
         }
     }
@@ -324,20 +336,20 @@ static void handle_awss_cmd(char *pwbuf, int blen, int argc, char **argv)
     aos_schedule_call(do_awss, NULL);
 }
 
-static struct cli_command awss_dev_ap_cmd = { .name     = "dev_ap",
-                                              .help     = "awss_dev_ap [start]",
-                                              .function = handle_dev_ap_cmd };
-static struct cli_command awss_cmd = { .name     = "awss",
-                                       .help     = "awss [start]",
-                                       .function = handle_awss_cmd };
+static struct cli_command awss_dev_ap_cmd = {.name = "dev_ap",
+                                             .help = "awss_dev_ap [start]",
+                                             .function = handle_dev_ap_cmd};
+static struct cli_command awss_cmd = {.name = "awss",
+                                      .help = "awss [start]",
+                                      .function = handle_awss_cmd};
 #endif
-static struct cli_command resetcmd = { .name     = "reset",
-                                       .help     = "factory reset",
-                                       .function = handle_reset_cmd };
+static struct cli_command resetcmd = {.name = "reset",
+                                      .help = "factory reset",
+                                      .function = handle_reset_cmd};
 
-static struct cli_command awss_enable_cmd = { .name     = "active_awss",
-                                              .help     = "active_awss [start]",
-                                              .function = handle_active_cmd };
+static struct cli_command awss_enable_cmd = {.name = "active_awss",
+                                             .help = "active_awss [start]",
+                                             .function = handle_active_cmd};
 #endif
 
 #ifdef CONFIG_PRINT_HEAP
@@ -351,7 +363,7 @@ static void duration_work(void *p)
 static int mqtt_connected_event_handler(void)
 {
     LOG("MQTT Construct  OTA start");
-#if defined(ENABLE_AOS_OTA) 
+#if defined(ENABLE_AOS_OTA)
     char product_key[PRODUCT_KEY_LEN + 1] = {0};
     char device_name[DEVICE_NAME_LEN + 1] = {0};
     char device_secret[DEVICE_SECRET_LEN + 1] = {0};
@@ -360,18 +372,19 @@ static int mqtt_connected_event_handler(void)
     HAL_GetDeviceSecret(device_secret);
     static ota_service_t ctx = {0};
     memset(&ctx, 0, sizeof(ota_service_t));
-    strncpy(ctx.pk, product_key, sizeof(ctx.pk)-1);
-    strncpy(ctx.dn, device_name, sizeof(ctx.dn)-1);
-    strncpy(ctx.ds, device_secret, sizeof(ctx.ds)-1);
+    strncpy(ctx.pk, product_key, sizeof(ctx.pk) - 1);
+    strncpy(ctx.dn, device_name, sizeof(ctx.dn) - 1);
+    strncpy(ctx.ds, device_secret, sizeof(ctx.ds) - 1);
     ctx.trans_protcol = 0;
     ctx.dl_protcol = 3;
     ota_service_init(&ctx);
 #endif
     return 0;
 }
-
+void borad_init(void);
 int application_start(int argc, char **argv)
 {
+    borad_init();
 #ifdef CONFIG_PRINT_HEAP
     print_heap();
     aos_post_delayed_action(5000, duration_work, NULL);
@@ -395,7 +408,7 @@ int application_start(int argc, char **argv)
     aos_register_event_filter(EV_KEY, linkkit_key_process, NULL);
     aos_register_event_filter(EV_WIFI, wifi_service_event, NULL);
     aos_register_event_filter(EV_YUNIO, cloud_service_event, NULL);
-    IOT_RegisterCallback(ITE_MQTT_CONNECT_SUCC,mqtt_connected_event_handler);
+    IOT_RegisterCallback(ITE_MQTT_CONNECT_SUCC, mqtt_connected_event_handler);
 
 #ifdef AOS_COMP_CLI
     aos_cli_register_command(&resetcmd);
@@ -408,15 +421,19 @@ int application_start(int argc, char **argv)
     set_iotx_info();
     IOT_SetLogLevel(IOT_LOG_DEBUG);
 
+    borad_init();
+
 #ifdef EN_COMBO_NET
     combo_net_init();
 #else
 #ifdef SUPPORT_DEV_AP
-     aos_task_new("dap_open", awss_open_dev_ap, NULL, 4096);
+    aos_task_new("dap_open", awss_open_dev_ap, NULL, 4096);
 #else
     aos_task_new("netmgr_start", start_netmgr, NULL, 4096);
 #endif
 #endif
+    //   borad_init();
+
     aos_loop_run();
 
     return 0;
