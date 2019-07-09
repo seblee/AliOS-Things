@@ -14,12 +14,17 @@
 *********************************************************/
 
 #include "hal_rgb_led.h"
-
+#ifdef GOKIT3_BSP_RGBLED
 static void rgbDelay(unsigned int us)
 {
     /* Define your delay function */
     volatile unsigned int i = 0;
+    // long long now = aos_now();
 
+    // while (aos_now() < now + i * 1000)
+    // {
+    //     /* code */
+    // }
     for (i = 0; i < us; i++)
         ;
 }
@@ -110,19 +115,16 @@ void rgbLedInit(void)
     dataDealwithSend(0, 0, 0); // display red
     dataDealwithSend(0, 0, 0);
 }
-
+#include "ulog/ulog.h"
 void rgbGpioInit(void)
 {
     /* Migrate your driver code */
-    gpio_dev_t gpio_dev = {GPIO_RGB_SCL, OUTPUT_PUSH_PULL, NULL};
+    gpio_dev_t gpio_dev1 = {GPIO_RGB_SCL, OUTPUT_PUSH_PULL, NULL};
+    gpio_dev_t gpio_dev2 = {GPIO_RGB_SDA, OUTPUT_PUSH_PULL, NULL};
 
-    gpio_dev.config = OUTPUT_PUSH_PULL;
+    hal_gpio_init(&gpio_dev1);
 
-    gpio_dev.port = GPIO_RGB_SCL;
-    hal_gpio_init(&gpio_dev);
-
-    // gpio_dev.prot = GPIO_RGB_SDA;
-    hal_gpio_init(&gpio_dev);
+    hal_gpio_init(&gpio_dev2);
 
     printf("rgbGpioInit \r\n");
 }
@@ -147,3 +149,4 @@ void rgbSensorTest(uint8_t rgbcou)
         //      GAgent_Printf(GAGENT_CRITICAL, "RGB : R");
     }
 }
+#endif

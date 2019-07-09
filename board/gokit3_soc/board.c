@@ -368,12 +368,11 @@ uint32_t user_rf_cal_sector_set(void)
 #include "ulog/ulog.h"
 void borad_init(void)
 {
-#ifdef GOKIT3_RGBLED
-#include "hal_rgb_led.h"
-    printf("rgbGpioInit success!\n\r");
+#ifdef GOKIT3_BSP_RGBLED
     rgbGpioInit();
-    LOG("rgbLedInit start");
     rgbLedInit();
     rgbControl(0, 255, 0);
 #endif
+    printf("rgbGpioInit success!\n\r");
+    LOG("rgbLedInit start");
 }

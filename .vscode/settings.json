@@ -1,7 +1,19 @@
 {
     "aliosStudio.inner.yosBin": "aos",
-    "aliosStudio.hardware.board": "developerkit",
-    "aliosStudio.name": "helloworld",
+    "aliosStudio.hardware.board": "gokit3_soc",
+    "aliosStudio.name": "seeledapp",
     "aliosStudio.aosVersion": "2.1.0",
     "C_Cpp.default.browse.databaseFilename": "${workspaceRoot}/.vscode/.TAGS.AOS.DB",
+    "python.formatting.provider": "black",
+    "python.pythonPath": "C:\\Python27\\python.exe",
+    "files.associations": {
+        "esp_system.h": "c",
+        "gpio.h": "c",
+        "gokit_rgb_led.h": "c",
+        "k_api.h": "c",
+        "ulog.h": "c",
+        "hal_rgb_led.h": "c"
+    },
+    "aliosStudio.comPort": "COM3",
+    "aliosStudio.hardware.baudrate": 912600,
 }

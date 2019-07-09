@@ -33,6 +33,7 @@ GLOBAL_INCLUDES += driver/
 $(NAME)_SOURCES := board.c
 
 $(NAME)_SOURCES += driver/hal_rgb_led.c 
+$(NAME)_SOURCES += driver/hal_temp_hum.c
 
 EXTRA_TARGET_MAKEFILES +=  $($(HOST_MCU_FAMILY)_LOCATION)/gen_crc_bin.mk
 

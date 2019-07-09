@@ -26,11 +26,11 @@
         hal_gpio_output_high(&dev); \
     }
 
-#define SDA_LOW                     \
-    {                               \
-        gpio_dev_t dev;             \
-        dev.port = GPIO_RGB_SDA;    \
-        hal_gpio_output_high(&dev); \
+#define SDA_LOW                    \
+    {                              \
+        gpio_dev_t dev;            \
+        dev.port = GPIO_RGB_SDA;   \
+        hal_gpio_output_low(&dev); \
     }
 #define SDA_HIGH                    \
     {                               \

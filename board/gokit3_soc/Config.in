@@ -22,6 +22,13 @@ config DEBUG_CONFIG_BACKTRACE
         set to y if you want to enable stack backtrace feature when system crash happened,
         default y
 
+config GOKIT3_BSP_RGBLED
+    bool "Enable rgbled unite"
+    default y
+    help
+        set to y if you want to use rgbled,
+        default y
+
 # "BSP SUPPORT FEATURE"
 config BSP_SUPPORT_UART
     bool
