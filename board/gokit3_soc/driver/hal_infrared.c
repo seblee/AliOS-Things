@@ -13,13 +13,11 @@
 *
 *********************************************************/
 
-#include "driver/hal_infrared.h"
-#include "driver/gpio16.h"
-#include "osapi.h"
-
-bool ICACHE_FLASH_ATTR irUpdateStatus(void)
+#include "hal_infrared.h"
+#include "ulog/ulog.h"
+int irUpdateStatus(void)
 {
-    if(gpio16InputGet())
+    if (gpio16InputGet())
     {
         return 0;
     }
@@ -28,17 +26,38 @@ bool ICACHE_FLASH_ATTR irUpdateStatus(void)
         return 1;
     }
 }
+static void gpio_isr_handler(void *arg)
+{
+    uint32_t gpio_num = (uint32_t)arg;
+    uint32_t value = 0;
+    gpio_dev_t gpio_dev = {0};
 
-void ICACHE_FLASH_ATTR irInit(void)
+    gpio_dev.port = Infrared_GPIO_PIN;
+    hal_gpio_input_get(&gpio_dev, &value);
+    LOG("GPIO[%u] intr, val: %u\n", gpio_num, value);
+}
+
+void infrared_init(void)
+{
+    gpio_dev_t gpio_dev = {0};
+    gpio_dev.config = IRQ_MODE;
+    gpio_dev.port = Infrared_GPIO_PIN;
+    hal_gpio_init(&gpio_dev);
+
+    /* gpio interrupt config */
+    hal_gpio_enable_irq(&gpio_dev, IRQ_TRIGGER_BOTH_EDGES, gpio_isr_handler, (void *)Infrared_GPIO_PIN);
+}
+
+void irInit(void)
 {
     /* Migrate your driver code */
 
     gpio16InputConf();
-    
-    os_printf("irInit \r\n"); 
+
+    os_printf("irInit \r\n");
 }
 
-void ICACHE_FLASH_ATTR irSensorTest(void)
+void irSensorTest(void)
 {
     /* Test LOG model */
 

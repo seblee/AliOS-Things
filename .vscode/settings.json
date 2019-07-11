@@ -12,7 +12,8 @@
         "gokit_rgb_led.h": "c",
         "k_api.h": "c",
         "ulog.h": "c",
-        "hal_rgb_led.h": "c"
+        "hal_rgb_led.h": "c",
+        "hal_temp_hum.h": "c"
     },
     "aliosStudio.comPort": "COM3",
     "aliosStudio.hardware.baudrate": 912600,

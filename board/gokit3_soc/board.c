@@ -376,6 +376,9 @@ void borad_init(void)
     printf("rgbGpioInit success!\n\r");
     LOG("rgbLedInit start");
 #endif
+#ifdef GOKIT3_BSP_INFRARED
+    infrared_init();
+#endif
 
 #ifdef GOKIT3_BSP_DHT11
     aos_msleep(2000);
@@ -383,6 +386,5 @@ void borad_init(void)
     printf("dh11Init result:%d\r\n", result);
     aos_msleep(2000);
     dh11SensorTest();
-
 #endif
 }
