@@ -29,6 +29,13 @@ config GOKIT3_BSP_RGBLED
         set to y if you want to use rgbled,
         default y
 
+config GOKIT3_BSP_DHT11
+    bool "Enable dht11 unite"
+    default y
+    help
+        set to y if you want to use tem_hum,
+        default y
+
 # "BSP SUPPORT FEATURE"
 config BSP_SUPPORT_UART
     bool

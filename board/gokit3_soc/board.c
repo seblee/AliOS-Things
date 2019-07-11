@@ -366,13 +366,23 @@ uint32_t user_rf_cal_sector_set(void)
     return rf_cal_sec;
 }
 #include "ulog/ulog.h"
+
 void borad_init(void)
 {
 #ifdef GOKIT3_BSP_RGBLED
     rgbGpioInit();
     rgbLedInit();
-    rgbControl(0, 255, 0);
-#endif
+    rgbControl(128, 0, 0);
     printf("rgbGpioInit success!\n\r");
     LOG("rgbLedInit start");
+#endif
+
+#ifdef GOKIT3_BSP_DHT11
+    aos_msleep(2000);
+    uint8_t result = dh11Init();
+    printf("dh11Init result:%d\r\n", result);
+    aos_msleep(2000);
+    dh11SensorTest();
+
+#endif
 }
