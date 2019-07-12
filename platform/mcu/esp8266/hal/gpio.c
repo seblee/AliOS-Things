@@ -36,15 +36,29 @@ int32_t hal_gpio_init(aos_gpio_dev_t *gpio)
         return EIO;
     }
 
-    if (gpio ->port > 16)
+    if (gpio->port > 16)
     {
         return EIO;
     }
 
     if (gpio->port == 16)
     {
-        gpio16_output_conf();
-        return 0;
+        if (
+            (gpio->config == OUTPUT_PUSH_PULL) ||
+            (gpio->config == OUTPUT_OPEN_DRAIN_NO_PULL) ||
+            (gpio->config == OUTPUT_OPEN_DRAIN_PULL_UP))
+        {
+            gpio16_output_conf();
+            return 0;
+        }
+        else if ((gpio->config == INPUT_PULL_UP) ||
+                 (gpio->config == INPUT_PULL_DOWN) ||
+                 (gpio->config == INPUT_HIGH_IMPEDANCE))
+        {
+            gpio16_input_conf();
+            return 0;
+        }
+        return EIO;
     }
 
     gpio_config_t io_conf;
@@ -176,6 +190,7 @@ int32_t hal_gpio_input_get(aos_gpio_dev_t *gpio, uint32_t *value)
     if (gpio->port == 16)
     {
         *value = gpio16_input_get();
+        return 0;
     }
     *value = GPIO_INPUT_GET(gpio->port);
 
