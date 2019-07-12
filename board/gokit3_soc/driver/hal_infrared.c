@@ -15,9 +15,13 @@
 
 #include "hal_infrared.h"
 #include "ulog/ulog.h"
+gpio_dev_t Infrared_gpio = {Infrared_GPIO_PIN, INPUT_PULL_UP, NULL};
+
 int irUpdateStatus(void)
 {
-    if (gpio16InputGet())
+    int32_t value;
+    hal_gpio_input_get(&Infrared_gpio, &value);
+    if (value)
     {
         return 0;
     }
@@ -26,40 +30,21 @@ int irUpdateStatus(void)
         return 1;
     }
 }
-static void gpio_isr_handler(void *arg)
-{
-    uint32_t gpio_num = (uint32_t)arg;
-    uint32_t value = 0;
-    gpio_dev_t gpio_dev = {0};
-
-    gpio_dev.port = Infrared_GPIO_PIN;
-    hal_gpio_input_get(&gpio_dev, &value);
-    LOG("GPIO[%u] intr, val: %u\n", gpio_num, value);
-}
-
-void infrared_init(void)
-{
-    gpio_dev_t gpio_dev = {0};
-    gpio_dev.config = IRQ_MODE;
-    gpio_dev.port = Infrared_GPIO_PIN;
-    hal_gpio_init(&gpio_dev);
-
-    /* gpio interrupt config */
-    hal_gpio_enable_irq(&gpio_dev, IRQ_TRIGGER_BOTH_EDGES, gpio_isr_handler, (void *)Infrared_GPIO_PIN);
-}
-
 void irInit(void)
 {
+    int32_t result;
     /* Migrate your driver code */
+    printf("irInit \r\n");
 
-    gpio16InputConf();
-
-    os_printf("irInit \r\n");
+    result = hal_gpio_init(&Infrared_gpio);
+    printf("infrared_init result:%d \r\n", result);
+    irSensorTest();
+    // gpio16InputConf();
 }
 
 void irSensorTest(void)
 {
     /* Test LOG model */
 
-    os_printf("InfIO : %d", irUpdateStatus());
+    printf("InfIO : %d", irUpdateStatus());
 }

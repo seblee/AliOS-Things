@@ -14,5 +14,4 @@
 void irInit(void);
 int irUpdateStatus(void);
 void irSensorTest(void);
-void infrared_init(void);
 #endif /*_HAL_INFRARED_H*/
