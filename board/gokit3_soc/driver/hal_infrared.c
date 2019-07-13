@@ -38,7 +38,7 @@ void irInit(void)
 
     result = hal_gpio_init(&Infrared_gpio);
     printf("infrared_init result:%d \r\n", result);
-    irSensorTest();
+
     // gpio16InputConf();
 }
 

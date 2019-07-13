@@ -43,6 +43,13 @@ config GOKIT3_BSP_INFRARED
         set to y if you want to use infrared,
         default y
 
+config GOKIT3_BSP_MOTOR
+    bool "Enable motor unit"
+    default y
+    help
+        set to y if you want to use motor,
+        default y
+
 # "BSP SUPPORT FEATURE"
 config BSP_SUPPORT_UART
     bool

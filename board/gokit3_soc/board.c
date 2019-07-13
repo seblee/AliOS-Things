@@ -378,6 +378,11 @@ void borad_init(void)
 #endif
 #ifdef GOKIT3_BSP_INFRARED
     irInit();
+    irSensorTest();
+#endif
+
+#ifdef GOKIT3_BSP_MOTOR
+    motorInit();
 #endif
 
 #ifdef GOKIT3_BSP_DHT11

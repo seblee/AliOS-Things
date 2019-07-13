@@ -57,6 +57,7 @@ $(NAME)_PREBUILT_LIBRARY += bsp/lib/libwpa.a
 $(NAME)_PREBUILT_LIBRARY += bsp/lib/libphy.a
 $(NAME)_PREBUILT_LIBRARY += bsp/lib/libgcc.a
 $(NAME)_PREBUILT_LIBRARY += bsp/lib/liblwip.a
+$(NAME)_PREBUILT_LIBRARY += bsp/lib/libpwm.a
 
 GLOBAL_CFLAGS   += -DXT_USE_THREAD_SAFE_CLIB=0
 $(NAME)_SOURCES := bsp/entry.c
