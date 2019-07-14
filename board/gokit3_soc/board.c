@@ -367,8 +367,10 @@ uint32_t user_rf_cal_sector_set(void)
 }
 #include "ulog/ulog.h"
 
-void borad_init(void)
+void borad_init_entry(void *p)
 {
+    LOG("borad_init: alive %s:%d %s\r\n", __func__, __LINE__,
+        aos_task_name());
 #ifdef GOKIT3_BSP_RGBLED
     rgbGpioInit();
     rgbLedInit();
@@ -392,4 +394,9 @@ void borad_init(void)
     aos_msleep(2000);
     dh11SensorTest();
 #endif
+    aos_task_exit(0);
+}
+void borad_init(void)
+{
+    aos_task_new("borad_init", borad_init_entry, NULL, 4096);
 }

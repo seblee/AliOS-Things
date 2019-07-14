@@ -52,5 +52,5 @@ typedef struct
 uint8_t dh11Read(uint8_t *temperature, uint8_t *humidity);
 uint8_t dh11Init(void); //Init DHT11
 void dh11SensorTest(void);
-
+uint8_t dh11Read(uint8_t *temperature, uint8_t *humidity);
 #endif /*_HAL_HEMP_HUM_H*/

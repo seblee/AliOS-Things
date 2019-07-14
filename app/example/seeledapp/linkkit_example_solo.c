@@ -9,41 +9,44 @@
 #include "iot_import.h"
 #include "cJSON.h"
 #include "app_entry.h"
+#include "app_json_parse.h"
 
-#define USE_CUSTOME_DOMAIN      (0)
+#define USE_CUSTOME_DOMAIN (0)
 
 #ifdef EN_COMBO_NET
 #include "combo_devinfo.h"
 #else
 // for demo only
 #ifndef SUPPORT_DEV_AP
-#define PRODUCT_KEY      "a1Njg3Y1xSy"
-#define PRODUCT_SECRET   "NyeaHJBWhKrRN9oG"
-#define DEVICE_NAME      "4D2n5LklSyDM7a8GRuUc"
-#define DEVICE_SECRET    "W6oNPjM6HCg2n9kvAJwOBtmbNvlqm3gX"
+#define PRODUCT_KEY "a1Njg3Y1xSy"
+#define PRODUCT_SECRET "NyeaHJBWhKrRN9oG"
+#define DEVICE_NAME "4D2n5LklSyDM7a8GRuUc"
+#define DEVICE_SECRET "W6oNPjM6HCg2n9kvAJwOBtmbNvlqm3gX"
 #else
-#define PRODUCT_KEY      "a1Njg3Y1xSy"
-#define PRODUCT_SECRET   "NyeaHJBWhKrRN9oG"
-#define DEVICE_NAME      "4D2n5LklSyDM7a8GRuUc"
-#define DEVICE_SECRET    "W6oNPjM6HCg2n9kvAJwOBtmbNvlqm3gX"
+#define PRODUCT_KEY "a1Njg3Y1xSy"
+#define PRODUCT_SECRET "NyeaHJBWhKrRN9oG"
+#define DEVICE_NAME "4D2n5LklSyDM7a8GRuUc"
+#define DEVICE_SECRET "W6oNPjM6HCg2n9kvAJwOBtmbNvlqm3gX"
 #endif
 #endif
 
 #if USE_CUSTOME_DOMAIN
-    #define CUSTOME_DOMAIN_MQTT     "iot-as-mqtt.cn-shanghai.aliyuncs.com"
-    #define CUSTOME_DOMAIN_HTTP     "iot-auth.cn-shanghai.aliyuncs.com"
+#define CUSTOME_DOMAIN_MQTT "iot-as-mqtt.cn-shanghai.aliyuncs.com"
+#define CUSTOME_DOMAIN_HTTP "iot-auth.cn-shanghai.aliyuncs.com"
 #endif
 
 #define USER_EXAMPLE_YIELD_TIMEOUT_MS (200)
 
-#define EXAMPLE_TRACE(...)                               \
-    do {                                                     \
-        HAL_Printf("\033[1;32;40m%s.%d: ", __func__, __LINE__);  \
-        HAL_Printf(__VA_ARGS__);                                 \
-        HAL_Printf("\033[0m\r\n");                                   \
+#define EXAMPLE_TRACE(...)                                      \
+    do                                                          \
+    {                                                           \
+        HAL_Printf("\033[1;32;40m%s.%d: ", __func__, __LINE__); \
+        HAL_Printf(__VA_ARGS__);                                \
+        HAL_Printf("\033[0m\r\n");                              \
     } while (0)
 
-typedef struct {
+typedef struct
+{
     int master_devid;
     int cloud_connected;
     int master_initialized;
@@ -87,15 +90,15 @@ static int user_disconnected_event_handler(void)
 }
 
 static int user_down_raw_data_arrived_event_handler(const int devid, const unsigned char *payload,
-        const int payload_len)
+                                                    const int payload_len)
 {
     EXAMPLE_TRACE("Down Raw Message, Devid: %d, Payload Length: %d", devid, payload_len);
     return 0;
 }
 
 static int user_service_request_event_handler(const int devid, const char *serviceid, const int serviceid_len,
-        const char *request, const int request_len,
-        char **response, int *response_len)
+                                              const char *request, const int request_len,
+                                              char **response, int *response_len)
 {
     int contrastratio = 0, to_cloud = 0;
     cJSON *root = NULL, *item_transparency = NULL, *item_from_cloud = NULL;
@@ -105,16 +108,19 @@ static int user_service_request_event_handler(const int devid, const char *servi
 
     /* Parse Root */
     root = cJSON_Parse(request);
-    if (root == NULL || !cJSON_IsObject(root)) {
+    if (root == NULL || !cJSON_IsObject(root))
+    {
         EXAMPLE_TRACE("JSON Parse Error");
         return -1;
     }
 
-    if (strlen("Custom") == serviceid_len && memcmp("Custom", serviceid, serviceid_len) == 0) {
+    if (strlen("Custom") == serviceid_len && memcmp("Custom", serviceid, serviceid_len) == 0)
+    {
         /* Parse Item */
         const char *response_fmt = "{\"Contrastratio\":%d}";
         item_transparency = cJSON_GetObjectItem(root, "transparency");
-        if (item_transparency == NULL || !cJSON_IsNumber(item_transparency)) {
+        if (item_transparency == NULL || !cJSON_IsNumber(item_transparency))
+        {
             cJSON_Delete(root);
             return -1;
         }
@@ -124,18 +130,22 @@ static int user_service_request_event_handler(const int devid, const char *servi
         /* Send Service Response To Cloud */
         *response_len = strlen(response_fmt) + 10 + 1;
         *response = (char *)HAL_Malloc(*response_len);
-        if (*response == NULL) {
+        if (*response == NULL)
+        {
             EXAMPLE_TRACE("Memory Not Enough");
             return -1;
         }
         memset(*response, 0, *response_len);
         HAL_Snprintf(*response, *response_len, response_fmt, contrastratio);
         *response_len = strlen(*response);
-    } else if (strlen("SyncService") == serviceid_len && memcmp("SyncService", serviceid, serviceid_len) == 0) {
+    }
+    else if (strlen("SyncService") == serviceid_len && memcmp("SyncService", serviceid, serviceid_len) == 0)
+    {
         /* Parse Item */
         const char *response_fmt = "{\"ToCloud\":%d}";
         item_from_cloud = cJSON_GetObjectItem(root, "FromCloud");
-        if (item_from_cloud == NULL || !cJSON_IsNumber(item_from_cloud)) {
+        if (item_from_cloud == NULL || !cJSON_IsNumber(item_from_cloud))
+        {
             cJSON_Delete(root);
             return -1;
         }
@@ -145,7 +155,8 @@ static int user_service_request_event_handler(const int devid, const char *servi
         /* Send Service Response To Cloud */
         *response_len = strlen(response_fmt) + 10 + 1;
         *response = (char *)HAL_Malloc(*response_len);
-        if (*response == NULL) {
+        if (*response == NULL)
+        {
             EXAMPLE_TRACE("Memory Not Enough");
             return -1;
         }
@@ -163,7 +174,7 @@ static int user_property_set_event_handler(const int devid, const char *request,
     int res = 0;
     user_example_ctx_t *user_example_ctx = user_example_get_ctx();
     EXAMPLE_TRACE("Property Set Received, Devid: %d, Request: %s", devid, request);
-
+    property_set_json_parse(request);
     res = IOT_Linkkit_Report(user_example_ctx->master_devid, ITM_MSG_POST_PROPERTY,
                              (unsigned char *)request, request_len);
     EXAMPLE_TRACE("Post Property Message ID: %d", res);
@@ -172,7 +183,7 @@ static int user_property_set_event_handler(const int devid, const char *request,
 }
 
 static int user_property_get_event_handler(const int devid, const char *request, const int request_len, char **response,
-        int *response_len)
+                                           int *response_len)
 {
     cJSON *request_root = NULL, *item_propertyid = NULL;
     cJSON *response_root = NULL;
@@ -181,22 +192,26 @@ static int user_property_get_event_handler(const int devid, const char *request,
 
     /* Parse Request */
     request_root = cJSON_Parse(request);
-    if (request_root == NULL || !cJSON_IsArray(request_root)) {
+    if (request_root == NULL || !cJSON_IsArray(request_root))
+    {
         EXAMPLE_TRACE("JSON Parse Error");
         return -1;
     }
 
     /* Prepare Response */
     response_root = cJSON_CreateObject();
-    if (response_root == NULL) {
+    if (response_root == NULL)
+    {
         EXAMPLE_TRACE("No Enough Memory");
         cJSON_Delete(request_root);
         return -1;
     }
 
-    for (index = 0; index < cJSON_GetArraySize(request_root); index++) {
+    for (index = 0; index < cJSON_GetArraySize(request_root); index++)
+    {
         item_propertyid = cJSON_GetArrayItem(request_root, index);
-        if (item_propertyid == NULL || !cJSON_IsString(item_propertyid)) {
+        if (item_propertyid == NULL || !cJSON_IsString(item_propertyid))
+        {
             EXAMPLE_TRACE("JSON Parse Error");
             cJSON_Delete(request_root);
             cJSON_Delete(response_root);
@@ -205,13 +220,19 @@ static int user_property_get_event_handler(const int devid, const char *request,
 
         EXAMPLE_TRACE("Property ID, index: %d, Value: %s", index, item_propertyid->valuestring);
 
-        if (strcmp("WIFI_Tx_Rate", item_propertyid->valuestring) == 0) {
+        if (strcmp("WIFI_Tx_Rate", item_propertyid->valuestring) == 0)
+        {
             cJSON_AddNumberToObject(response_root, "WIFI_Tx_Rate", 1111);
-        } else if (strcmp("WIFI_Rx_Rate", item_propertyid->valuestring) == 0) {
+        }
+        else if (strcmp("WIFI_Rx_Rate", item_propertyid->valuestring) == 0)
+        {
             cJSON_AddNumberToObject(response_root, "WIFI_Rx_Rate", 2222);
-        } else if (strcmp("RGBColor", item_propertyid->valuestring) == 0) {
+        }
+        else if (strcmp("RGBColor", item_propertyid->valuestring) == 0)
+        {
             cJSON *item_rgbcolor = cJSON_CreateObject();
-            if (item_rgbcolor == NULL) {
+            if (item_rgbcolor == NULL)
+            {
                 cJSON_Delete(request_root);
                 cJSON_Delete(response_root);
                 return -1;
@@ -220,9 +241,12 @@ static int user_property_get_event_handler(const int devid, const char *request,
             cJSON_AddNumberToObject(item_rgbcolor, "Green", 100);
             cJSON_AddNumberToObject(item_rgbcolor, "Blue", 100);
             cJSON_AddItemToObject(response_root, "RGBColor", item_rgbcolor);
-        } else if (strcmp("HSVColor", item_propertyid->valuestring) == 0) {
+        }
+        else if (strcmp("HSVColor", item_propertyid->valuestring) == 0)
+        {
             cJSON *item_hsvcolor = cJSON_CreateObject();
-            if (item_hsvcolor == NULL) {
+            if (item_hsvcolor == NULL)
+            {
                 cJSON_Delete(request_root);
                 cJSON_Delete(response_root);
                 return -1;
@@ -231,9 +255,12 @@ static int user_property_get_event_handler(const int devid, const char *request,
             cJSON_AddNumberToObject(item_hsvcolor, "Saturation", 50);
             cJSON_AddNumberToObject(item_hsvcolor, "Value", 50);
             cJSON_AddItemToObject(response_root, "HSVColor", item_hsvcolor);
-        } else if (strcmp("HSLColor", item_propertyid->valuestring) == 0) {
+        }
+        else if (strcmp("HSLColor", item_propertyid->valuestring) == 0)
+        {
             cJSON *item_hslcolor = cJSON_CreateObject();
-            if (item_hslcolor == NULL) {
+            if (item_hslcolor == NULL)
+            {
                 cJSON_Delete(request_root);
                 cJSON_Delete(response_root);
                 return -1;
@@ -242,30 +269,48 @@ static int user_property_get_event_handler(const int devid, const char *request,
             cJSON_AddNumberToObject(item_hslcolor, "Saturation", 70);
             cJSON_AddNumberToObject(item_hslcolor, "Lightness", 70);
             cJSON_AddItemToObject(response_root, "HSLColor", item_hslcolor);
-        } else if (strcmp("WorkMode", item_propertyid->valuestring) == 0) {
+        }
+        else if (strcmp("WorkMode", item_propertyid->valuestring) == 0)
+        {
             cJSON_AddNumberToObject(response_root, "WorkMode", 4);
-        } else if (strcmp("NightLightSwitch", item_propertyid->valuestring) == 0) {
+        }
+        else if (strcmp("NightLightSwitch", item_propertyid->valuestring) == 0)
+        {
             cJSON_AddNumberToObject(response_root, "NightLightSwitch", 1);
-        } else if (strcmp("Brightness", item_propertyid->valuestring) == 0) {
+        }
+        else if (strcmp("Brightness", item_propertyid->valuestring) == 0)
+        {
             cJSON_AddNumberToObject(response_root, "Brightness", 30);
-        } else if (strcmp("LightSwitch", item_propertyid->valuestring) == 0) {
+        }
+        else if (strcmp("LightSwitch", item_propertyid->valuestring) == 0)
+        {
             cJSON_AddNumberToObject(response_root, "LightSwitch", 1);
-        } else if (strcmp("ColorTemperature", item_propertyid->valuestring) == 0) {
+        }
+        else if (strcmp("ColorTemperature", item_propertyid->valuestring) == 0)
+        {
             cJSON_AddNumberToObject(response_root, "ColorTemperature", 2800);
-        } else if (strcmp("PropertyCharacter", item_propertyid->valuestring) == 0) {
+        }
+        else if (strcmp("PropertyCharacter", item_propertyid->valuestring) == 0)
+        {
             cJSON_AddStringToObject(response_root, "PropertyCharacter", "testprop");
-        } else if (strcmp("Propertypoint", item_propertyid->valuestring) == 0) {
+        }
+        else if (strcmp("Propertypoint", item_propertyid->valuestring) == 0)
+        {
             cJSON_AddNumberToObject(response_root, "Propertypoint", 50);
-        } else if (strcmp("LocalTimer", item_propertyid->valuestring) == 0) {
+        }
+        else if (strcmp("LocalTimer", item_propertyid->valuestring) == 0)
+        {
             cJSON *array_localtimer = cJSON_CreateArray();
-            if (array_localtimer == NULL) {
+            if (array_localtimer == NULL)
+            {
                 cJSON_Delete(request_root);
                 cJSON_Delete(response_root);
                 return -1;
             }
 
             cJSON *item_localtimer = cJSON_CreateObject();
-            if (item_localtimer == NULL) {
+            if (item_localtimer == NULL)
+            {
                 cJSON_Delete(request_root);
                 cJSON_Delete(response_root);
                 cJSON_Delete(array_localtimer);
@@ -281,7 +326,8 @@ static int user_property_get_event_handler(const int devid, const char *request,
     cJSON_Delete(request_root);
 
     *response = cJSON_PrintUnformatted(response_root);
-    if (*response == NULL) {
+    if (*response == NULL)
+    {
         EXAMPLE_TRACE("No Enough Memory");
         cJSON_Delete(response_root);
         return -1;
@@ -295,7 +341,7 @@ static int user_property_get_event_handler(const int devid, const char *request,
 }
 
 static int user_report_reply_event_handler(const int devid, const int msgid, const int code, const char *reply,
-        const int reply_len)
+                                           const int reply_len)
 {
     const char *reply_value = (reply == NULL) ? ("NULL") : (reply);
     const int reply_value_len = (reply_len == 0) ? (strlen("NULL")) : (reply_len);
@@ -307,7 +353,7 @@ static int user_report_reply_event_handler(const int devid, const int msgid, con
 }
 
 static int user_trigger_event_reply_event_handler(const int devid, const int msgid, const int code, const char *eventid,
-        const int eventid_len, const char *message, const int message_len)
+                                                  const int eventid_len, const char *message, const int message_len)
 {
     EXAMPLE_TRACE("Trigger Event Reply Received, Devid: %d, Message ID: %d, Code: %d, EventID: %.*s, Message: %.*s", devid,
                   msgid, code,
@@ -329,7 +375,8 @@ static int user_initialized(const int devid)
     user_example_ctx_t *user_example_ctx = user_example_get_ctx();
     EXAMPLE_TRACE("Device Initialized, Devid: %d", devid);
 
-    if (user_example_ctx->master_devid == devid) {
+    if (user_example_ctx->master_devid == devid)
+    {
         user_example_ctx->master_initialized = 1;
     }
 
@@ -347,7 +394,8 @@ static int user_fota_event_handler(int type, const char *version)
     int buffer_length = 128;
     user_example_ctx_t *user_example_ctx = user_example_get_ctx();
 
-    if (type == 0) {
+    if (type == 0)
+    {
         EXAMPLE_TRACE("New Firmware Version: %s", version);
 
         IOT_Linkkit_Query(user_example_ctx->master_devid, ITM_MSG_QUERY_FOTA_DATA, (unsigned char *)buffer, buffer_length);
@@ -368,7 +416,8 @@ static int user_cota_event_handler(int type, const char *config_id, int config_s
     int buffer_length = 128;
     user_example_ctx_t *user_example_ctx = user_example_get_ctx();
 
-    if (type == 0) {
+    if (type == 0)
+    {
         EXAMPLE_TRACE("New Config ID: %s", config_id);
         EXAMPLE_TRACE("New Config Size: %d", config_size);
         EXAMPLE_TRACE("New Config Type: %s", get_type);
@@ -386,7 +435,8 @@ static uint64_t user_update_sec(void)
 {
     static uint64_t time_start_ms = 0;
 
-    if (time_start_ms == 0) {
+    if (time_start_ms == 0)
+    {
         time_start_ms = HAL_UptimeMs();
     }
 
@@ -395,44 +445,70 @@ static uint64_t user_update_sec(void)
 
 void user_post_property(void)
 {
-    static int example_index = 0;
+    static int example_index = 7;
     int res = 0;
     user_example_ctx_t *user_example_ctx = user_example_get_ctx();
     char *property_payload = "NULL";
+    uint8_t need_free = 0;
 
-    if (example_index == 0) {
+    if (example_index == 0)
+    {
         /* Normal Example */
-        property_payload = "{\"LightSwitch\":1}";
+        property_payload = "{\"LightSwitch\":0}";
         example_index++;
-    } else if (example_index == 1) {
+    }
+    else if (example_index == 1)
+    {
         /* Wrong Property ID */
         property_payload = "{\"LightSwitchxxxx\":1}";
         example_index++;
-    } else if (example_index == 2) {
+    }
+    else if (example_index == 2)
+    {
         /* Wrong Value Format */
         property_payload = "{\"LightSwitch\":\"test\"}";
         example_index++;
-    } else if (example_index == 3) {
+    }
+    else if (example_index == 3)
+    {
         /* Wrong Value Range */
         property_payload = "{\"LightSwitch\":10}";
         example_index++;
-    } else if (example_index == 4) {
+    }
+    else if (example_index == 4)
+    {
         /* Missing Property Item */
         property_payload = "{\"RGBColor\":{\"Red\":45,\"Green\":30}}";
         example_index++;
-    } else if (example_index == 5) {
+    }
+    else if (example_index == 5)
+    {
         /* Wrong Params Format */
         property_payload = "\"hello world\"";
         example_index++;
-    } else if (example_index == 6) {
+    }
+    else if (example_index == 6)
+    {
         /* Wrong Json Format */
         property_payload = "hello world";
-        example_index = 0;
+        example_index++;
+    }
+    else if (example_index == 7)
+    {
+        int result = property_json_build(&property_payload);
+        need_free = 1;
+        if (result != 0)
+        {
+            property_payload = "hello world";
+            need_free = 0;
+        }
+        example_index = 7;
     }
 
     res = IOT_Linkkit_Report(user_example_ctx->master_devid, ITM_MSG_POST_PROPERTY,
                              (unsigned char *)property_payload, strlen(property_payload));
-
+    if (need_free)
+        aos_free(property_payload);
     EXAMPLE_TRACE("Post Property Message ID: %d", res);
 }
 
@@ -444,27 +520,38 @@ void user_post_event(void)
     char *event_id = "Error";
     char *event_payload = "NULL";
 
-    if (example_index == 0) {
+    if (example_index == 0)
+    {
         /* Normal Example */
         event_payload = "{\"ErrorCode\":0}";
         example_index++;
-    } else if (example_index == 1) {
+    }
+    else if (example_index == 1)
+    {
         /* Wrong Property ID */
         event_payload = "{\"ErrorCodexxx\":0}";
         example_index++;
-    } else if (example_index == 2) {
+    }
+    else if (example_index == 2)
+    {
         /* Wrong Value Format */
         event_payload = "{\"ErrorCode\":\"test\"}";
         example_index++;
-    } else if (example_index == 3) {
+    }
+    else if (example_index == 3)
+    {
         /* Wrong Value Range */
         event_payload = "{\"ErrorCode\":10}";
         example_index++;
-    } else if (example_index == 4) {
+    }
+    else if (example_index == 4)
+    {
         /* Wrong Value Range */
         event_payload = "\"hello world\"";
         example_index++;
-    } else if (example_index == 5) {
+    }
+    else if (example_index == 5)
+    {
         /* Wrong Json Format */
         event_payload = "hello world";
         example_index = 0;
@@ -512,7 +599,8 @@ static int user_master_dev_available(void)
 {
     user_example_ctx_t *user_example_ctx = user_example_get_ctx();
 
-    if (user_example_ctx->cloud_connected && user_example_ctx->master_initialized) {
+    if (user_example_ctx->cloud_connected && user_example_ctx->master_initialized)
+    {
         return 1;
     }
 
@@ -531,19 +619,21 @@ static int max_running_seconds = 0;
 int linkkit_main(void *paras)
 {
 
-    uint64_t                        time_prev_sec = 0, time_now_sec = 0;
-    uint64_t                        time_begin_sec = 0;
-    int                             res = 0;
-    iotx_linkkit_dev_meta_info_t    master_meta_info;
-    user_example_ctx_t             *user_example_ctx = user_example_get_ctx();
+    uint64_t time_prev_sec = 0, time_now_sec = 0;
+    uint64_t time_begin_sec = 0;
+    int res = 0;
+    iotx_linkkit_dev_meta_info_t master_meta_info;
+    user_example_ctx_t *user_example_ctx = user_example_get_ctx();
 #if defined(__UBUNTU_SDK_DEMO__)
-    int                             argc = ((app_main_paras_t *)paras)->argc;
-    char                          **argv = ((app_main_paras_t *)paras)->argv;
+    int argc = ((app_main_paras_t *)paras)->argc;
+    char **argv = ((app_main_paras_t *)paras)->argv;
 
-    if (argc > 1) {
-        int     tmp = atoi(argv[1]);
+    if (argc > 1)
+    {
+        int tmp = atoi(argv[1]);
 
-        if (tmp >= 60) {
+        if (tmp >= 60)
+        {
             max_running_seconds = tmp;
             EXAMPLE_TRACE("set [max_running_seconds] = %d seconds\n", max_running_seconds);
         }
@@ -597,53 +687,63 @@ int linkkit_main(void *paras)
 
     /* Create Master Device Resources */
     user_example_ctx->master_devid = IOT_Linkkit_Open(IOTX_LINKKIT_DEV_TYPE_MASTER, &master_meta_info);
-    if (user_example_ctx->master_devid < 0) {
+    if (user_example_ctx->master_devid < 0)
+    {
         EXAMPLE_TRACE("IOT_Linkkit_Open Failed\n");
         return -1;
     }
 
     /* Start Connect Aliyun Server */
     res = IOT_Linkkit_Connect(user_example_ctx->master_devid);
-    if (res < 0) {
+    if (res < 0)
+    {
         EXAMPLE_TRACE("IOT_Linkkit_Connect Failed\n");
         return -1;
     }
 
     time_begin_sec = user_update_sec();
-    while (1) {
+    while (1)
+    {
         IOT_Linkkit_Yield(USER_EXAMPLE_YIELD_TIMEOUT_MS);
 
         time_now_sec = user_update_sec();
-        if (time_prev_sec == time_now_sec) {
+        if (time_prev_sec == time_now_sec)
+        {
             continue;
         }
-        if (max_running_seconds && (time_now_sec - time_begin_sec > max_running_seconds)) {
+        if (max_running_seconds && (time_now_sec - time_begin_sec > max_running_seconds))
+        {
             EXAMPLE_TRACE("Example Run for Over %d Seconds, Break Loop!\n", max_running_seconds);
             break;
         }
 
         /* Post Proprety Example */
-        if (time_now_sec % 11 == 0 && user_master_dev_available()) {
+        if (time_now_sec % 11 == 0 && user_master_dev_available())
+        {
             user_post_property();
         }
         /* Post Event Example */
-        if (time_now_sec % 17 == 0 && user_master_dev_available()) {
-            user_post_event();
+        if (time_now_sec % 17 == 0 && user_master_dev_available())
+        {
+            // user_post_event();
         }
 
         /* Device Info Update Example */
-        if (time_now_sec % 23 == 0 && user_master_dev_available()) {
-            user_deviceinfo_update();
+        if (time_now_sec % 23 == 0 && user_master_dev_available())
+        {
+            // user_deviceinfo_update();
         }
 
         /* Device Info Delete Example */
-        if (time_now_sec % 29 == 0 && user_master_dev_available()) {
-            user_deviceinfo_delete();
+        if (time_now_sec % 29 == 0 && user_master_dev_available())
+        {
+            // user_deviceinfo_delete();
         }
 
         /* Post Raw Example */
-        if (time_now_sec % 37 == 0 && user_master_dev_available()) {
-            user_post_raw_data();
+        if (time_now_sec % 37 == 0 && user_master_dev_available())
+        {
+            // user_post_raw_data();
         }
 
         time_prev_sec = time_now_sec;

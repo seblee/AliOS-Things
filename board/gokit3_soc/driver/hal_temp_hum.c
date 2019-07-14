@@ -113,7 +113,7 @@ static uint8_t hdt11ReadByte(void)
     return dat;
 }
 
-static uint8_t dht11ReadData(uint8_t *temperature, uint8_t *humidity)
+uint8_t dht11ReadData(uint8_t *temperature, uint8_t *humidity)
 {
     uint8_t i;
     uint8_t buf[5];
