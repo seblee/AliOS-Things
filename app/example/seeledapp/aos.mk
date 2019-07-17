@@ -51,6 +51,8 @@ $(NAME)_SOURCES += linkkit_example_sched.c
 endif
 endif
 
+$(NAME)_SOURCES += app_fun/app_json_parse.c
+
 ifeq ($(SEELEDAPP_CONFIG_PRINT_HEAP),y)
 $(NAME)_DEFINES += CONFIG_PRINT_HEAP
 endif
@@ -81,4 +83,5 @@ endif
 
 
 GLOBAL_INCLUDES += ./
+GLOBAL_INCLUDES += ./app_fun/
 

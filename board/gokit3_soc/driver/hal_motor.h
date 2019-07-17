@@ -40,5 +40,6 @@ typedef int16_t _MOTOR_T;
 
 /* Function declaration */
 void motorInit(void);
+void motorControl(_MOTOR_T status);
 
 #endif /*_HAL_MOTOR_H*/

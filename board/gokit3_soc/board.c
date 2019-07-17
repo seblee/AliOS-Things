@@ -374,7 +374,6 @@ void borad_init_entry(void *p)
 #ifdef GOKIT3_BSP_RGBLED
     rgbGpioInit();
     rgbLedInit();
-    rgbControl(10, 0, 0);
     printf("rgbGpioInit success!\n\r");
     LOG("rgbLedInit start");
 #endif

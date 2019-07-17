@@ -18,6 +18,7 @@ static int RGB_GREEN = 0;
 static int RGB_BLUE = 0;
 static uint8_t EnvTemperature = 0;
 static uint8_t EnvHumidity = 0;
+static int16_t motor = 0;
 
 /********
  * fun  :property_set_json_parse
@@ -26,6 +27,7 @@ static uint8_t EnvHumidity = 0;
  */
 int property_set_json_parse(const char *json_src)
 {
+    uint8_t Led_Ctr = 0;
     cJSON *root = NULL;
     cJSON *js_switch = NULL;
     root = cJSON_Parse(json_src);
@@ -37,17 +39,44 @@ int property_set_json_parse(const char *json_src)
     js_switch = cJSON_GetObjectItem(root, "LightSwitch");
     if (js_switch)
     {
+        Led_Ctr = 1;
         LightSwitch = js_switch->valueint;
-
+        EXAMPLE_TRACE("LightSwitCtrl:%d", LightSwitch);
+    }
+    cJSON *js_RGB_RED = cJSON_GetObjectItem(root, "RGB_RED");
+    if (js_RGB_RED)
+    {
+        Led_Ctr = 1;
+        RGB_RED = js_RGB_RED->valueint;
+    }
+    cJSON *js_RGB_GREEN = cJSON_GetObjectItem(root, "RGB_GREEN");
+    if (js_RGB_GREEN)
+    {
+        Led_Ctr = 1;
+        RGB_GREEN = js_RGB_GREEN->valueint;
+    }
+    cJSON *js_RGB_BLUE = cJSON_GetObjectItem(root, "RGB_BLUE");
+    if (js_RGB_BLUE)
+    {
+        Led_Ctr = 1;
+        RGB_BLUE = js_RGB_BLUE->valueint;
+    }
+    if (Led_Ctr)
+    {
         if (LightSwitch)
         {
-            rgbControl(10, 0, 0);
+            rgbControl(RGB_RED, RGB_GREEN, RGB_BLUE);
         }
         else
         {
             rgbControl(0, 0, 0);
         }
-        EXAMPLE_TRACE("LightSwitCtrl:%d", LightSwitch);
+    }
+    cJSON *js_motor = cJSON_GetObjectItem(root, "motor");
+    if (js_motor)
+    {
+        motor = js_motor->valueint - 5;
+        motorControl(motor);
     }
 }
 
