@@ -19,6 +19,14 @@ static int RGB_BLUE = 0;
 static uint8_t EnvTemperature = 0;
 static uint8_t EnvHumidity = 0;
 static int16_t motor = 0;
+static uint8_t EventCode = 0;
+const char *EventStr[] = {
+    "device normal",
+    "TempHumError",
+    "RGBError",
+    "MotorError",
+    "InfraredError",
+};
 
 /********
  * fun  :property_set_json_parse
@@ -102,4 +110,27 @@ int property_json_build(char **json)
     cJSON_Delete(response_root);
     if (*json != NULL)
         EXAMPLE_TRACE("JSON len:%d,JSON:%s", strlen(*json), *json);
+    return 0;
+}
+
+int event_json_build(char **json)
+{
+    cJSON *response_root = NULL;
+    response_root = cJSON_CreateObject();
+    if (response_root == NULL || !cJSON_IsObject(response_root))
+    {
+        EXAMPLE_TRACE("JSON Create Error");
+        return -1;
+    }
+    cJSON_AddNumberToObject(response_root, "ErrorCode", EventCode);
+    cJSON_AddStringToObject(response_root, "ErrorName", EventStr[EventCode]);
+
+    *json = cJSON_PrintUnformatted(response_root);
+    cJSON_Delete(response_root);
+    if (*json != NULL)
+        EXAMPLE_TRACE("JSON len:%d,JSON:%s", strlen(*json), *json);
+    EventCode++;
+    if (EventCode == 5)
+        EventCode = 0;
+    return 0;
 }

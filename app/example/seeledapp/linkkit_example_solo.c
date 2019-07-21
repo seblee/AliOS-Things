@@ -514,11 +514,12 @@ void user_post_property(void)
 
 void user_post_event(void)
 {
-    static int example_index = 0;
+    static int example_index = 10;
     int res = 0;
     user_example_ctx_t *user_example_ctx = user_example_get_ctx();
     char *event_id = "Error";
     char *event_payload = "NULL";
+    uint8_t need_free = 0;
 
     if (example_index == 0)
     {
@@ -554,11 +555,24 @@ void user_post_event(void)
     {
         /* Wrong Json Format */
         event_payload = "hello world";
-        example_index = 0;
+        example_index = 10;
+    }
+    else if (example_index == 10)
+    {
+        int result = event_json_build(&event_payload);
+        need_free = 1;
+        if (result != 0)
+        {
+            event_payload = "{\"ErrorCode\":0}";
+            need_free = 0;
+        }
+        example_index = 10;
     }
 
     res = IOT_Linkkit_TriggerEvent(user_example_ctx->master_devid, event_id, strlen(event_id),
                                    event_payload, strlen(event_payload));
+    if (need_free)
+        aos_free(event_payload);
     EXAMPLE_TRACE("Post Event Message ID: %d", res);
 }
 
@@ -725,7 +739,7 @@ int linkkit_main(void *paras)
         /* Post Event Example */
         if (time_now_sec % 17 == 0 && user_master_dev_available())
         {
-            // user_post_event();
+            user_post_event();
         }
 
         /* Device Info Update Example */

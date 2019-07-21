@@ -421,8 +421,6 @@ int application_start(int argc, char **argv)
     set_iotx_info();
     IOT_SetLogLevel(IOT_LOG_DEBUG);
 
-    borad_init();
-
 #ifdef EN_COMBO_NET
     combo_net_init();
 #else
@@ -432,7 +430,6 @@ int application_start(int argc, char **argv)
     aos_task_new("netmgr_start", start_netmgr, NULL, 4096);
 #endif
 #endif
-    //   borad_init();
 
     aos_loop_run();
 

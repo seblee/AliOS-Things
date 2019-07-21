@@ -8,5 +8,6 @@
 int property_set_json_parse(const char *json_src);
 
 int property_json_build(char **json);
+int event_json_build(char **json);
 
 #endif
