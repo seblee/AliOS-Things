@@ -14,6 +14,7 @@ registry_board = {
     'atsame54': ['atsam.json'],
     'esp32': ['esp32.json'],
     'esp8266': ['esp8266.json'],
+    'gokit3_soc': ['esp8266.json'],
     'mk3060': ['mk3060.json'],
     'stm32': ['stm32_stlink.json'],
     'starterkit': ['starterkit_erase.json', 'stm32_stlink.json'],
@@ -118,6 +119,8 @@ esp8266 = {
 ],
 }
 flash_configs['esp8266'] = esp8266
+# Flash configs for gokit3_soc board
+flash_configs['gokit3_soc'] = esp8266 
 
 # Flash configs for esp8266 board
 mk3060 = {

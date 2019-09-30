@@ -155,6 +155,12 @@ if AOS_APP_PROV_APP
         default "prov_app"
 endif
 
+source "app/example/seeledapp/Config.in"
+if AOS_APP_SEELEDAPP
+    config AOS_BUILD_APP
+        default "seeledapp"
+endif
+
 source "app/example/sk/sk_gui/Config.in"
 if AOS_APP_SK_GUI
     config AOS_BUILD_APP

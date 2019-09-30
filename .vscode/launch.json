@@ -5,7 +5,7 @@
             "name": "Debug",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceRoot}/out/helloworld@developerkit/binary/helloworld@developerkit.elf",
+            "program": "${workspaceRoot}/out/seeledapp@gokit3_soc/binary/seeledapp@gokit3_soc.elf",
             "args": [],
             "stopAtEntry": true,
             "cwd": "${workspaceRoot}",
@@ -22,7 +22,7 @@
                     "text": "target remote localhost:4242"
                 },
                 {
-                    "text": "file out/helloworld@developerkit/binary/helloworld@developerkit.elf"
+                    "text": "file out/seeledapp@gokit3_soc/binary/seeledapp@gokit3_soc.elf"
                 },
                 {
                     "text": "break application_start"
@@ -45,7 +45,7 @@
                 "miDebuggerPath": "arm-none-eabi-gdb"
             },
             "windows": {
-                "miDebuggerPath": "arm-none-eabi-gdb.exe"
+                "miDebuggerPath": "d:\\MyCloud\\AliyunIOT\\AliOS-Things\\build\\compiler\\gcc-arm-none-eabi\\Win32\\bin\\arm-none-eabi-gdb.exe"
             }
         }
     ]

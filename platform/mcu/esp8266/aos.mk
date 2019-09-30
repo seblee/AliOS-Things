@@ -67,6 +67,7 @@ $(NAME)_PREBUILT_LIBRARY += bsp/lib/liblwip_loopback.a
 else
 $(NAME)_PREBUILT_LIBRARY += bsp/lib/liblwip.a
 endif
+$(NAME)_PREBUILT_LIBRARY += bsp/lib/libpwm.a
 
 GLOBAL_CFLAGS   += -DXT_USE_THREAD_SAFE_CLIB=0
 $(NAME)_SOURCES := bsp/entry.c

@@ -20,6 +20,9 @@
     "esp8266": [
         "esp8266.json"
     ],
+    "gokit3_soc": [
+        "esp8266.json"
+    ],
     "m400": [
         "stm32_stlink.json"
     ],

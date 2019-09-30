@@ -253,7 +253,9 @@ def do_process(process):
     process.do_action()
 
 
-class process(object, metaclass=abc.ABCMeta):
+class process(object):
+    __metaclass__ = abc.ABCMeta
+
     @abc.abstractmethod
     def do_action(aos_global_config):
         return
@@ -842,7 +844,9 @@ class create_bin_process_impl(process):
             env.Program(bin_file, stripped_file, LINKCOM=bin_cmd, LINKCOMSTR=linkcomstr)
 
 
-class aos_command(object, metaclass=abc.ABCMeta):
+class aos_command(object):
+    __metaclass__ = abc.ABCMeta
+
     @abc.abstractmethod
     def dispatch_action(self, target, source, env):
         return

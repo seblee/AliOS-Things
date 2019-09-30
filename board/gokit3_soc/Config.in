@@ -1,0 +1,70 @@
+config AOS_BOARD_GOKIT3_SOC
+    bool "GOKIT3_SOC"
+    select AOS_MCU_ESP8266
+    select AOS_COMP_KERNEL_INIT
+    help
+        The ESP8266 integrates a Tensilica L106 32-bit RISC processor, which achieves extralow power consumption and reaches a maximum clock speed of 160 MHz. The Real-Time Operating System (RTOS) and Wi-Fi stack allow 80% of the processing power to be available for user application programming and development.
+
+if AOS_BOARD_GOKIT3_SOC
+# Configurations for board gokit3_soc
+
+config DEBUG_CONFIG_PANIC
+    bool "Enable debug panic feature"
+    default y
+    help
+        set to y if you want to enable panic debug feature when system crash happened,
+        default y
+
+config DEBUG_CONFIG_BACKTRACE
+    bool "Enable stack backtrace feature"
+    default y
+    help
+        set to y if you want to enable stack backtrace feature when system crash happened,
+        default y
+
+config GOKIT3_BSP_RGBLED
+    bool "Enable rgbled unit"
+    default y
+    help
+        set to y if you want to use rgbled,
+        default y
+
+config GOKIT3_BSP_DHT11
+    bool "Enable dht11 unit"
+    default y
+    help
+        set to y if you want to use tem_hum,
+        default y
+
+config GOKIT3_BSP_INFRARED
+    bool "Enable infrared unit"
+    default y
+    help
+        set to y if you want to use infrared,
+        default y
+
+config GOKIT3_BSP_MOTOR
+    bool "Enable motor unit"
+    default y
+    help
+        set to y if you want to use motor,
+        default y
+
+# "BSP SUPPORT FEATURE"
+config BSP_SUPPORT_UART
+    bool
+    default y
+
+config BSP_SUPPORT_GPIO
+    bool
+    default y
+
+config BSP_SUPPORT_FLASH
+    bool
+    default y
+
+config BSP_SUPPORT_BLE
+    bool
+    default y
+
+endif
