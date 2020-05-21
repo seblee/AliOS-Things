@@ -7,7 +7,7 @@
       "command": "aos",
       "args": [
         "make",
-        "seeledapp@gokit3_soc",
+        "helloworld@developerkit",
         "-c",
         "config"
       ],
@@ -32,7 +32,7 @@
       "command": "aos",
       "args": [
         "upload",
-        "seeledapp@gokit3_soc"
+        "helloworld@developerkit"
       ],
       "presentation": {
         "focus": true
@@ -44,7 +44,7 @@
       "command": "aos",
       "args": [
         "debug",
-        "seeledapp@gokit3_soc"
+        "helloworld@developerkit"
       ],
       "presentation": {
         "focus": true
@@ -82,7 +82,7 @@
       "command": "aos",
       "args": [
         "ota",
-        "seeledapp@gokit3_soc",
+        "helloworld@developerkit",
         "-d",
         "",
         "-p",

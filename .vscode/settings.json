@@ -1,14 +1,7 @@
 {
     "aliosStudio.inner.yosBin": "aos",
-    "aliosStudio.hardware.board": "gokit3_soc",
-    "aliosStudio.name": "seeledapp",
-    "aliosStudio.aosVersion": "3.0.0",
-    "C_Cpp.default.browse.databaseFilename": "${workspaceRoot}/.vscode/.TAGS.AOS.DB",
-    "python.pythonPath": "C:\\Python27\\python.exe",
-    "files.associations": {
-        "app_json_parse.h": "c",
-        "cjson.h": "c",
-        "stdint.h": "c",
-        "pwm.h": "c"
-    }
+    "aliosStudio.hardware.board": "developerkit",
+    "aliosStudio.name": "helloworld",
+    "aliosStudio.aosVersion": "3.1.0",
+    "C_Cpp.default.browse.databaseFilename": "${workspaceRoot}/.vscode/.TAGS.AOS.DB"
 }
