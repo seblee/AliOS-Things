@@ -106,7 +106,6 @@ kstat_t krhino_buf_queue_dyn_create(kbuf_queue_t **queue, const name_t *name,
  *
  * @param[out] queue     pointer to the queue (the space is provided inside, from heap)
  * @param[in]  name      name of the queue
- * @param[in]  buf       pointer to the buf
  * @param[in]  msg_size  size of the msg
  * @param[in]  msg_num   number of msg
  *

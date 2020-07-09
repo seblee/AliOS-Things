@@ -4,8 +4,8 @@
  * @copyright Copyright (C) 2015-2019 Alibaba Group Holding Limited
  */
 
-#ifndef K_MM_RINGBUF_H
-#define K_MM_RINGBUF_H
+#ifndef K_RINGBUF_H 
+#define K_RINGBUF_H 
 
 /** @addtogroup aos_rhino ringbuf
  *  Ringbuf is a FIFO communication mechanism.

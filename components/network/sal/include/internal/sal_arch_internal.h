@@ -366,4 +366,4 @@ void sal_arch_unprotect(sal_prot_t pval);
 }
 #endif
 
-#endif /*_SAL_ARCH_H_*/
+#endif /*_SAL_ARCH_INTERNAL_H_*/
